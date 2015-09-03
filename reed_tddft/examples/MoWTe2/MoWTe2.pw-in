@@ -1,0 +1,48 @@
+&control
+    calculation = 'scf'
+    title = 'TDDFT Example MoWTe2 (US PPS)'
+    restart_mode='from_scratch',
+    pseudo_dir = '../../../pseudo',
+    outdir='./out',
+    prefix='MoWTe2'
+ /
+ &system
+    ibrav = 8,
+    celldm(1) = 6.714197,
+    celldm(2) = 1.731776,
+    celldm(3) = 5.629046,
+    nat = 12,
+    ntyp = 3,
+    ecutwfc = 25,
+    nosym=.true,
+/
+ &electrons
+    electron_maxstep = 1000
+	diagonalization = 'david',
+    conv_thr = 1.0d-6,
+ /
+&ions
+/
+
+ATOMIC_SPECIES
+Mo	95.95	Mo.pbe-mt_fhi.UPF
+W	183.84	W.pbe-mt_fhi.UPF
+Te	127.60	Te.pbe-mt_fhi.UPF
+
+ATOMIC_POSITIONS {Angstrom}
+Mo	1.77650	3.07654	0.00000
+Mo	0.00000	0.00008	0.00000
+W	1.77650	1.02552	8.00000
+W	0.00000	4.10192	8.00000
+Te	0.00000	4.10194	1.80446
+Te	0.00000	4.10194	-1.80446
+Te	1.77650	1.02548	1.80447
+Te	1.77650	1.02548	-1.80447
+Te	0.00000	2.05089	9.81135
+Te	0.00000	2.05089	6.18865
+Te	1.77650	5.12743	9.81135
+Te	1.77650	5.12743	6.18865
+
+K_POINTS automatic
+4 4 1    0 0 0
+

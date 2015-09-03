@@ -1,0 +1,6 @@
+
+call tddft_cgsolver_initialize(npwx, nbnd_occ_max)
+if (iverbosity > 0) then
+write(stdout,'(5X,''Done with tddft_cgsolver_initialize'')')
+call flush_unit(stdout)
+endif

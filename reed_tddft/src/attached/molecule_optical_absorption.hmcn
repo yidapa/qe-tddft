@@ -1,0 +1,23 @@
+
+        ! guess midpoint wfc
+        tddft_psi(:,:,1) = (1.d0/4.d0)*tddft_psi(:,:,2) + (3.d0)/(4.d0)*evc(:,:)        
+        ! move tddft_psi(2) forward
+        tddft_psi(:,:,2) = evc(:,:)
+        evc(:,:) = tddft_psi(:,:,1)
+        call update_hamiltonian(istep)
+
+        ! compute H(t+0.5dt)|psi(t)> and S(t+0.5dt)|psi(t)>
+        call h_psi(npwx, npw, nbnd_occ(ik), tddft_psi(:,:,2), tddft_hpsi)
+        call s_psi(npwx, npw, nbnd_occ(ik), tddft_psi(:,:,2), tddft_spsi)
+
+        ! calculate (S - ee*H(t+0.5dt))|psi(t)>
+        b = (0.d0, 0.d0)
+        b(:,:) = tddft_spsi(:,:) - ee*tddft_hpsi(:,:)
+
+        ! solve A * x = b
+        call tddft_cgsolver(tddft_ch_psi_all, b, tddft_psi(:,:,1), npwx, npw, &
+                         conv_threshold, ik, lter, flag_global, anorm, &
+                         nbnd_occ(ik), ee)
+
+        ! update the wavefunctions
+        evc(:,:) = tddft_psi(:,:,1)

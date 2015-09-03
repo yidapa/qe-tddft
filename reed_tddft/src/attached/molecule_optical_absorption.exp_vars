@@ -1,0 +1,4 @@
+! experimental functionalities
+real(dp), allocatable ::        quadrupole(:,:,:)
+complex(dp), allocatable :: circular(:,:), circular_local(:)
+integer, external :: find_free_unit

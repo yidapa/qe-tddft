@@ -1,0 +1,40 @@
+&control
+    calculation = 'scf'
+    title = 'TDDFT Example 1Tprime-MoS2'
+    restart_mode='from_scratch',
+    pseudo_dir = '../../../pseudo',
+    outdir='./out',
+    prefix='1Tprime-MoS2'
+ /
+ &system
+    ibrav = 8,
+    celldm(1) = 6.003662,
+    celldm(2) = 1.802014,
+    celldm(3) = 11.33144,
+    nat = 6,
+    ntyp = 2,
+    ecutwfc = 26,
+    nosym=.true,
+/
+ &electrons
+    electron_maxstep = 1000
+	diagonalization = 'david',
+    conv_thr = 1.0d-8,
+ /
+&ions
+/
+
+ATOMIC_SPECIES
+Mo	95.95	Mo.pbe-mt_fhi.UPF
+S	32.065	S.pbe-mt_fhi.UPF
+
+ATOMIC_POSITIONS {Angstrom}
+Mo	0.00000 -0.10412  0.07958
+Mo	1.58850  2.15962 -0.07955
+S	0.00000  1.49768 -1.73655
+S	0.00000  3.44141  1.32625
+S	1.58850  0.55780  1.73656
+S	1.58850  4.33909 -1.32628
+
+K_POINTS automatic
+16 16 1    0 0 0

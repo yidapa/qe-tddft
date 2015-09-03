@@ -1,0 +1,4 @@
+! used in cg solver
+integer :: lter, flag_global
+external tddft_ch_psi_all
+real(dp) :: anorm

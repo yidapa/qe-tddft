@@ -1,0 +1,11 @@
+
+        ! calculate H |psi_current>, S |psi_current>
+        call h_psi(npwx, npw, nbnd_occ(ik), evc, tddft_hpsi)
+
+        ! explicit SOD scheme which is O(dt*dt) stable
+        tddft_psi(1:npw,1:nbnd_occ(ik),1) = evc(1:npw,1:nbnd_occ(ik)) - &
+                          2.d0*ee*tddft_hpsi(1:npw,1:nbnd_occ(ik))
+
+        ! update the wavefunctions
+        tddft_psi(:,:,2) = evc(:,:)
+        evc(:,:) = tddft_psi(:,:,1)

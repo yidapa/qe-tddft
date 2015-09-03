@@ -1,0 +1,484 @@
+subroutine molecule_optical_absorption
+!----------------------------------------------------------------------
+!       modules and inherited variables
+!----------------------------------------------------------------------
+        USE kinds,              ONLY :  dp
+        USE io_global,          ONLY :  stdout, ionode
+        USE io_files,           ONLY :  nwordwfc, iunwfc, iunigk
+        USE ions_base,          ONLY :  nat, ntyp => nsp, ityp
+        USE cell_base,          ONLY :  at, bg, omega, tpiba, tpiba2, &
+                                        alat
+        USE wavefunctions_module, &
+                                ONLY :  evc
+        USE klist,              ONLY :  nks, nkstot, wk, xk, nelec, ngk
+        USE wvfct,              ONLY :  nbnd, npwx, npw, igk, wg, &
+                                        g2kin, current_k, ecutwfc
+        USE lsda_mod,           ONLY :  current_spin, lsda, isk, nspin
+        USE becmod,             ONLY :  becp  
+        USE mp_pools,           ONLY :  my_pool_id, inter_pool_comm, &
+                                        intra_pool_comm
+        USE mp,                 ONLY :  mp_sum, mp_barrier
+        USE gvect,              ONLY :  ngm, g
+        USE gvecs,              ONLY :  nls
+        USE fft_base,           ONLY :  dfftp, dfftp
+        USE buffers,            ONLY :  get_buffer, save_buffer
+        USE fixed_occ,          ONLY :  tfixed_occ 
+        USE uspp,               ONLY :  nkb, vkb, deeq
+        USE ldaU,               ONLY :  lda_plus_U
+        USE uspp_param,         ONLY :  nh
+        USE scf,                ONLY :  rho, rho_core, rhog_core, &
+                                        vltot, v, vrs
+        USE control_flags,      ONLY :  tqr
+        USE tddft_module
+!----------------------------------------------------------------------
+!       modules and inherited variables
+!----------------------------------------------------------------------
+
+!----------------------------------------------------------------------
+!       variables
+!----------------------------------------------------------------------
+        IMPLICIT NONE
+        ! tddft_psi(:,:,2) is the past time wfc
+        ! tddft_psi(:,:,1) is out next time estimate
+        complex(dp), allocatable ::     tddft_psi(:,:,:), &
+        ! b is used for for all A*x = b
+                                        b(:,:), &
+        ! sor_psi(:,:) is (k+1)-k th increment
+                                        sor_psi(:,:) 
+        ! H(t+?)|psi(t+?)> temporary
+        complex(dp), allocatable ::     tddft_hpsi(:,:), &
+        ! S|psi(t+?)> temporary
+                                        tddft_spsi(:,:)
+        ! charge and dipole moment
+        real(dp), allocatable ::        charge(:), dipole(:,:), wfc_norm(:)
+        ! SOR omega and tolerance
+        real(dp) ::                     sor_omega, sor_tol, sor_alpha
+        ! all time steps
+        integer ::                      istep, &
+        ! SOR maxiter and iter
+                                        sor_maxiter, sor_iter, &
+        ! loop over k points, spins, 
+                                        ik, is, &
+        ! loop over bands and plane waves 
+                                        ibnd, ipw
+        ! i*dt/2
+        complex(dp) ::                  ee
+!----------------------------------------------------------------------
+!       variables
+INCLUDE 'attached/molecule_optical_absorption.exp_vars'
+!----------------------------------------------------------------------
+
+!----------------------------------------------------------------------
+!       initialization
+!----------------------------------------------------------------------
+        ! allocate memory
+        call allocate_optical()
+        ee = i_complex * dt / 2.d0  ! i*dt/2: do not change
+!----------------------------------------------------------------------
+!       initialization
+!----------------------------------------------------------------------
+
+!----------------------------------------------------------------------
+!       main loop
+!----------------------------------------------------------------------
+do istep = 1, nstep
+
+        !------------first report all physical observables
+        ! calculate dipole moment along x, y, and z direction
+        call molecule_compute_dipole( charge, dipole )
+        ! print observables
+        if (ionode) then
+                do is = 1, nspin
+                write(stdout,'(''CHARGE '',I1,1X,I6,3E16.6)') is, &
+                                                istep, charge(is)
+                write(stdout,'(''DIP    '',I1,1X,I6,3E16.6)') is, &
+                                                istep, dipole(:,is)
+                enddo
+        endif
+        !------------first report all physical observables
+
+        !------------loop over all k-points, will be paralellized
+        if (nks > 1) rewind (iunigk)
+        do ik = 1, nks
+                current_k = ik
+                current_spin = isk(ik)
+
+                ! initialize at k-point k 
+                call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, &
+                                                        igk, g2kin)
+                g2kin = g2kin * tpiba2
+                call init_us_2(npw, igk, xk(1,ik), vkb)
+        
+                ! read evc from file and compute becp
+                if (istep == 1) then
+                        call get_buffer (evc, nwordwfc, iunwfc, ik)
+                else
+                        ! evc = (0.d0, 0.d0)
+                        ! call get_buffer (evc, nwordwfc, iunevcn, ik)
+                endif
+
+                ! read tddft_psi from file
+                if (istep == 1) then
+                        ! apply electric field
+                        ! call apply_electric_field(tddft_psi)
+                        tddft_psi(:,:,2) = evc(:,:)
+                else
+                        ! tddft_psi(:,:,2) = (0.d0,0.d0)
+                        ! call get_buffer (tddft_psi(:,:,2), &
+                        !                nwordtdwfc, iuntdwfc, ik)
+                endif
+
+INCLUDE 'attached/molecule_optical_absorption.wfc_norm'
+
+                ! update ham from last step
+                ! call update_hamiltonian(istep)
+
+                ! construct b first
+                if (1==1) then
+                        call h_psi(npwx, npw, nbnd_occ(ik), evc, &
+                                                                tddft_hpsi)
+                        call s_psi(npwx, npw, nbnd_occ(ik), evc, &
+                                                                tddft_spsi)
+                        sor_alpha = 1.d0
+                else
+                        call h_psi(npwx, npw, nbnd_occ(ik), tddft_psi(:,:,2), &
+                                                                tddft_hpsi)
+                        call s_psi(npwx, npw, nbnd_occ(ik), tddft_psi(:,:,2), &
+                                                                tddft_spsi)
+                        sor_alpha = 2.d0
+
+                endif
+                b(:,:) = tddft_spsi(:,:) - (sor_alpha*ee)*tddft_hpsi(:,:)
+
+                ! enter SOR routine
+                ! y(0)
+                if (istep==1) then
+                        tddft_psi(:,:,2) = (1.d0/sor_omega) * evc(:,:)
+                else
+                        tddft_psi(:,:,1) = 2.d0*evc(:,:) - tddft_psi(:,:,2)
+                        tddft_psi(:,:,2) = (1.d0/sor_omega) * tddft_psi(:,:,1)
+                endif
+                ! y(1)
+                call h_psi(npwx, npw, nbnd_occ(ik), tddft_psi(:,:,2), &
+                                                                tddft_hpsi)
+                call s_psi(npwx, npw, nbnd_occ(ik), tddft_psi(:,:,2), &
+                                                                tddft_spsi)
+                tddft_psi(:,:,1) = b(:,:) + tddft_psi(:,:,2) &
+                                -sor_omega*tddft_spsi(:,:) - &
+                                (sor_alpha*ee)*sor_omega*tddft_hpsi(:,:)
+                ! dy(0)
+                sor_psi(:,:) = tddft_psi(:,:,1) - tddft_psi(:,:,2)
+
+                ! propagate dy(k+1) from dy(k)
+                do sor_iter = 1,sor_maxiter
+                        call h_psi(npwx, npw, nbnd_occ(ik), sor_psi(:,:), &
+                                                                tddft_hpsi)
+                        call s_psi(npwx, npw, nbnd_occ(ik), sor_psi(:,:), &
+                                                                tddft_spsi)
+                        ! compute the increment
+                        tddft_psi(:,:,2) = sor_psi(:,:) &
+                                - sor_omega*tddft_spsi(:,:) &
+                                -(sor_alpha*ee)*sor_omega*tddft_hpsi(:,:)
+                        ! update the wfc and the increment
+                        sor_psi(:,:) = tddft_psi(:,:,2)
+                        tddft_psi(:,:,2) = tddft_psi(:,:,1) + sor_psi(:,:)
+                        tddft_psi(:,:,1) = tddft_psi(:,:,2)
+                        ! check error
+                                write(stdout,*) 'SOR abs err:', sum(abs(sor_psi))
+                enddo
+
+                ! update the wavefunctions
+                tddft_psi(:,:,2) = evc(:,:)
+                evc(:,:) = sor_omega*tddft_psi(:,:,1)
+
+! INCLUDE 'attached/molecule_optical_absorption.euler'
+! INCLUDE 'attached/molecule_optical_absorption.sod'
+! INCLUDE 'attached/molecule_optical_absorption.cn'
+! INCLUDE 'attached/molecule_optical_absorption.hmcn'
+! INCLUDE 'attached/molecule_optical_absorption.rk4'
+! save wavefunctions to disk
+! save evc as the cur time wfc and save tddft_psi(2) as the past
+! call save_buffer (evc, nwordwfc, iunevcn, ik)
+! call save_buffer (tddft_psi(:,:,2), nwordtdwfc, iuntdwfc, ik)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        enddo
+        !------------loop over all k-points, will be paralellized
+
+        call flush_unit(stdout)
+enddo
+!----------------------------------------------------------------------
+!       main loop
+!----------------------------------------------------------------------
+
+!----------------------------------------------------------------------
+!       finalization
+!----------------------------------------------------------------------
+        call deallocate_optical()
+!----------------------------------------------------------------------
+!       finalization
+!----------------------------------------------------------------------
+
+
+
+
+
+
+
+ 
+CONTAINS
+
+  !====================================================================
+  ! Print the legend key
+  !====================================================================    
+  SUBROUTINE print_legend
+    write(stdout,'(5X,''Output quantities:'')')
+    write(stdout,'(5X,''  CHARGE spin  istep  charge'')')
+    write(stdout,'(5X,''  DIP    spin  istep  dipole(1:3)'')')
+    write(stdout,'(5X,''  QUAD   spin  istep  quadrupole(1:3,1:3)'')')
+    write(stdout,'(5X,''  ANG    spin  istep  Re[L(1:3)]  Im[L(1:3)]'')')
+    write(stdout,*)
+    call flush_unit(stdout)
+  END SUBROUTINE print_legend
+
+  
+  !====================================================================
+  ! Initialize and allocate memory
+  !====================================================================    
+  SUBROUTINE allocate_optical()
+    USE becmod, ONLY : becp, allocate_bec_type
+    IMPLICIT NONE
+    integer :: ik
+    
+    nbnd_occ_max = 0
+    do ik = 1, nks
+      if (nbnd_occ(ik) > nbnd_occ_max) nbnd_occ_max = nbnd_occ(ik)
+    enddo
+
+    call allocate_bec_type(nkb, nbnd, becp)
+   
+    allocate (tddft_psi (npwx,nbnd,2))
+    allocate (sor_psi (npwx,nbnd))
+    allocate (tddft_hpsi(npwx,nbnd_occ_max))
+    allocate (tddft_spsi(npwx,nbnd_occ_max))
+    allocate (b(npwx,nbnd_occ_max))
+ allocate (wfc_norm(nbnd_occ_max))
+    tddft_psi = (0.d0,0.d0)
+    tddft_hpsi = (0.d0,0.d0)
+    tddft_spsi = (0.d0,0.d0)
+    b = (0.d0,0.d0)
+
+    sor_omega = 1.d0
+    sor_tol = 1.0d-5
+    sor_maxiter = 40
+
+    allocate (charge(nspin), dipole(3,nspin), quadrupole(3,3,nspin))
+    allocate (circular(3,nspin), circular_local(3))
+    charge = 0.d0
+    dipole = 0.d0
+    quadrupole = 0.d0
+    circular = (0.d0, 0.d0)
+    circular_local = (0.d0, 0.d0)
+
+    allocate (r_pos(3,dfftp%nnr), r_pos_s(3,dfftp%nnr))
+    call molecule_setup_r
+    
+  END SUBROUTINE allocate_optical
+  
+  
+  !====================================================================
+  ! Deallocate memory
+  !====================================================================    
+  SUBROUTINE deallocate_optical()
+    USE becmod, ONLY : becp, deallocate_bec_type
+    IMPLICIT NONE
+
+    call deallocate_bec_type(becp)
+    deallocate (tddft_psi, tddft_hpsi, tddft_spsi, b)
+    deallocate (charge, dipole, quadrupole, circular, circular_local)
+    deallocate (r_pos, r_pos_s)
+
+  END SUBROUTINE deallocate_optical
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  !====================================================================
+  ! compute circular dichroism (EXPERIMENTAL, NORM-CONSERVING ONLY)
+  !====================================================================      
+  subroutine compute_circular_dichroism(cd)
+    USE fft_base,               ONLY : dfftp
+    USE fft_interfaces,         ONLY : invfft
+    USE mp_global,              ONLY : me_pool
+    IMPLICIT NONE
+    REAL(DP) :: xx(dfftp%nnr), yy(dfftp%nnr), zz(dfftp%nnr), gk
+    INTEGER  :: ik, ibnd, i, ii, jj, kk, index0, index, ir, ipol, ind, i_current_spin, ig
+    complex(dp) :: p_psi(npwx), p_psi_r(dfftp%nnr, 3), cd(3, nspin), psic1(dfftp%nnr)
+    
+    xx(:) = 0.d0
+    yy(:) = 0.d0
+    zz(:) = 0.d0
+    
+    index0 = 0
+
+#ifdef __PARA
+  do i = 1, me_pool
+    index0 = index0 + dfftp%nr1x*dfftp%nr2x*dfftp%npp(i)
+  enddo
+#endif
+
+  ! loop over real space grid
+  do ir = 1, dfftp%nnr
+    index = index0 + ir - 1
+    kk     = index / (dfftp%nr1x*dfftp%nr2x)
+    index = index - (dfftp%nr1x*dfftp%nr2x)*kk
+    jj     = index / dfftp%nr1x
+    index = index - dfftp%nr1x*jj
+    ii     = index
+
+             xx(ir) = &
+                  dble( ii-1 )/dble(dfftp%nr1) * at(1,1) * alat + &
+                  dble( jj-1 )/dble(dfftp%nr2) * at(1,2) * alat + &
+                  dble( kk-1 )/dble(dfftp%nr3) * at(1,3) * alat
+             
+             yy(ir) = &
+                  dble( ii-1 )/dble(dfftp%nr1) * at(2,1) * alat + &
+                  dble( jj-1 )/dble(dfftp%nr2) * at(2,2) * alat + &
+                  dble( kk-1 )/dble(dfftp%nr3) * at(2,3) * alat
+             
+             zz(ir) = &
+                  dble( ii-1 )/dble(dfftp%nr1) * at(3,1) * alat + &
+                  dble( jj-1 )/dble(dfftp%nr2) * at(3,2) * alat + &
+                  dble( kk-1 )/dble(dfftp%nr3) * at(3,3) * alat
+             
+    end do
+    
+    cd(:,:) = (0.d0, 0.d0)
+    
+    do ik = 1, nks
+       
+       if (nbnd_occ(ik) > 0) then
+          
+       i_current_spin = isk(ik)
+       call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
+       g2kin(:) = g2kin(:) * tpiba2
+       
+       do ibnd = 1, nbnd_occ(ik)
+          
+          p_psi_r(:, :) = (0.d0, 0.d0)
+          do ipol = 1, 3
+             p_psi(:) = (0.d0, 0.d0)
+             do ig = 1, npw
+                gk = xk(ipol,ik) + g(ipol,igk(ig))
+                p_psi(ig) = gk * tpiba * tddft_psi(ig, ibnd, ik)
+             end do
+             psic1(:) = (0.d0, 0.d0)
+             psic1(nls(igk(1:npw))) = p_psi(:)
+             call invfft('Wave', psic1, dfftp)
+             p_psi_r(:,ipol) = psic1(:)
+          end do
+          
+          ! transform wavefunction from reciprocal space into real space
+          psic1(:) = (0.d0, 0.d0)
+          psic1(nls(igk(1:npw))) = tddft_psi(1:npw, ibnd, ik)
+          call invfft('Wave', psic1, dfftp)
+          
+          do ind = 1, dfftp%nnr
+             cd(1, i_current_spin) = cd(1, i_current_spin) + &
+                  conjg(psic1(ind)) * ( yy(ind) * p_psi_r(ind,3) - zz(ind) * p_psi_r(ind,2) )
+             cd(2, i_current_spin) = cd(2, i_current_spin) + &
+                  conjg(psic1(ind)) * ( zz(ind) * p_psi_r(ind,1) - xx(ind) * p_psi_r(ind,3) )
+             cd(3, i_current_spin) = cd(3, i_current_spin) + &
+                  conjg(psic1(ind)) * ( xx(ind) * p_psi_r(ind,2) - yy(ind) * p_psi_r(ind,1) )
+          end do
+          
+          
+       end do
+
+       end if
+       
+    end do
+    cd = cd  / dble(dfftp%nnr)
+    
+    
+    RETURN
+  end subroutine compute_circular_dichroism
+
+END SUBROUTINE molecule_optical_absorption

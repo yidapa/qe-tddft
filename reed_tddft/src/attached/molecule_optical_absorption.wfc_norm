@@ -1,0 +1,9 @@
+
+! do some diagnositics on the wfc norms
+wfc_norm(:) = 0.d0
+do ibnd = 1, nbnd_occ(ik)
+do ipw = 1,npw
+wfc_norm(ibnd) = wfc_norm(ibnd)+conjg(evc(ipw,ibnd))*evc(ipw,ibnd)
+enddo
+enddo
+write(stdout,*) 'WFCNORM', istep, wfc_norm

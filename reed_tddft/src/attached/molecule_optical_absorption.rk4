@@ -1,0 +1,27 @@
+
+        tddft_psi(:,:,2) = evc(:,:)
+
+        ! first compute |k1> = -2 * ee * hpsi( tddft_psi(:,:,2) )
+        call h_psi(npwx, npw, nbnd_occ(ik), evc, tddft_hpsi)
+        tddft_psi(:,:,1) = tddft_psi(:,:,2) - (ee/3.d0) * tddft_hpsi(:,:)
+        evc(:,:) = tddft_psi(:,:,2) - ee * tddft_hpsi(:,:)
+ 
+        ! second compute |k2> = -2 * ee * hpsi( tddft_psi(:,:,2)+0.5|k1> )
+        call update_hamiltonian(istep)
+        call h_psi(npwx, npw, nbnd_occ(ik), evc, tddft_hpsi)
+        tddft_psi(:,:,1) = tddft_psi(:,:,1) - (ee/1.5d0) * tddft_hpsi(:,:)
+        evc(:,:) = tddft_psi(:,:,2) - ee * tddft_hpsi(:,:)
+
+        ! third compute |k3> = -2 * ee * hpsi( tddft_psi(:,:,2)+0.5|k2> )
+        call update_hamiltonian(istep)
+        call h_psi(npwx, npw, nbnd_occ(ik), evc, tddft_hpsi)
+        tddft_psi(:,:,1) = tddft_psi(:,:,1) - (ee/1.5d0) * tddft_hpsi(:,:)
+        evc(:,:) = tddft_psi(:,:,2) - 2.d0 * ee * tddft_hpsi(:,:)
+
+        ! fourth compute |k4> = -2 * ee * hpsi( tddft_psi(:,:,2)+|k3> )
+        call update_hamiltonian(istep)
+        call h_psi(npwx, npw, nbnd_occ(ik), evc, tddft_hpsi)
+        tddft_psi(:,:,1) = tddft_psi(:,:,1) - (ee/3.d0) * tddft_hpsi(:,:)
+
+        ! update the wavefunctions
+        evc(:,:) = tddft_psi(:,:,1)

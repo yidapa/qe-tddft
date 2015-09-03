@@ -1,0 +1,2 @@
+
+        call tddft_cgsolver_finalize()

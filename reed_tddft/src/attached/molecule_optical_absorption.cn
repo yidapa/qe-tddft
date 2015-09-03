@@ -1,0 +1,17 @@
+
+        ! calculate H |psi_current>, S |psi_current>
+        call h_psi(npwx, npw, nbnd_occ(ik), evc, tddft_hpsi)
+        call s_psi(npwx, npw, nbnd_occ(ik), evc, tddft_spsi)
+
+        ! calculate (S - H*dt*i/2) |\psi_current>
+        b = (0.d0, 0.d0)
+        b(1:npw, 1:nbnd_occ(ik)) = tddft_spsi(1:npw,1:nbnd_occ(ik)) - &
+                ee * tddft_hpsi(1:npw,1:nbnd_occ(ik))
+        ! solve A * x = b
+        call tddft_cgsolver(tddft_ch_psi_all, b, tddft_psi(:,:,1), npwx, npw, &
+                         conv_threshold, ik, lter, flag_global, anorm, &
+                         nbnd_occ(ik), ee)
+
+        ! update the wavefunctions
+        tddft_psi(:,:,2) = evc(:,:)
+        evc(1:npw,1:nbnd_occ(ik)) = tddft_psi(1:npw,1:nbnd_occ(ik),1)
