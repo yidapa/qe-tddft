@@ -1,7 +1,7 @@
 # TDDFT with Quantum Espresso
 This project is aimed at using Quantum Espresso to do new research in Time-Dependent Density Functional Theory (TDDFT). We use Quantum Espresso version 5.2.0 and ce-tddft written by Xiaofeng Qian and Davide Ceresoli (see the [ce-tddft github](https://github.com/dceresoli/ce-tddft) page).
 
-This code adds to the time-dependent code provided ce-tddft by extending to bilayers, providing more integration schemes, and more. 
+This code adds to the time-dependent code provided in ce-tddft by extending to bilayers, providing new integration schemes, and more. The code is being developed by the [Materials Computation and Theory Group](http://web.stanford.edu/group/evanreed/index.html) at Stanford.
 
 ##Installation instructions (Centurion)
 
