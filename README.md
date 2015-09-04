@@ -9,6 +9,11 @@ This code adds to the time-dependent code provided in ce-tddft by extending to b
 ```
 $ git clone https://github.com/rehnd/qe-tddft.git
 ```
+Note: this may fail due to firewall on centurion. In this case, use
+
+```
+$ git clone git://github.com/rehnd/qe-tddft.git
+```
 
 ####2 Edit your .bashrc file to use the intel compiler and openmpi. Add the following lines to ~/.bashrc
 ```
