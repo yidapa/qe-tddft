@@ -15,7 +15,9 @@ Note: this may fail due to firewall on centurion. In this case, use
 $ git clone git://github.com/rehnd/qe-tddft.git
 ```
 
-#### 2 Edit your .bashrc file to use the intel compiler and openmpi. Add the following lines to ~/.bashrc
+#### 2 Edit your .bashrc file to use the intel compiler and openmpi. 
+Add the following lines to ~/.bashrc
+
 ```
 source /opt/intel/fce/11/bin/ifortvars.sh intel64
 source /opt/open-mpi/tcp-intel11/mpivars.sh
@@ -74,7 +76,7 @@ Open the file titled ```run_espresso``` and edit line 43 to say
 ```
 echo "mpirun -bynode -np $nproc $your_dir/espresso/bin/pw.x  < $input >& `pwd`/$output" >> $script
 ```
-where $your_dir is the directory that contains the top-level espresso directory.
+where ```$your_dir``` is the directory that contains the top-level espresso directory.
 
 Now change to the ce-tddft bin directory
 
