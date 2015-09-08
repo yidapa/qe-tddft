@@ -17,7 +17,7 @@ $ git clone git://github.com/rehnd/qe-tddft.git
 
 #### 2 Edit your .bashrc file to use the intel compiler and openmpi. Add the following lines to ~/.bashrc
 ```
-source /opt/intel/fce/11/bin/ifortvars.sh intel 64
+source /opt/intel/fce/11/bin/ifortvars.sh intel64
 source /opt/open-mpi/tcp-intel11/mpivars.sh
 source /opt/intel/mkl/10.1/tools/environment/mklvarsem64t.sh
 ```
