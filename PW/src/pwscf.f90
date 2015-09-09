@@ -7,6 +7,8 @@
 !
 !----------------------------------------------------------------------------
 PROGRAM pwscf
+!Yuan is a good boy
+
   !----------------------------------------------------------------------------
   !
   ! ... Main program calling one instance of Plane Wave Self-Consistent Field code
