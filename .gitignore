@@ -5,6 +5,11 @@
 *.o
 *.mod
 
+archive/atomic-5.2.0.tar.gz
+atomic/
+install/make-ld1
+install/uncompress-ld1
+
 Modules/version.f90
 bin/iotk
 include/c_defs.h
