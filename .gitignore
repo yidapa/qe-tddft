@@ -1,10 +1,15 @@
-PW/src/*.a
-PW/src/*.o
-PW/src/*.mod
-PW/src/*.x
-PW/tools/*.o
-PW/tools/*.mod
-PW/tools/*.x
+*~
+.*~
+*.x
+*.a
+*.o
+*.mod
+
+Modules/version.f90
+bin/iotk
+include/c_defs.h
+install/make_blas.inc
+iotk
 
 install/config.log
 install/config.status
