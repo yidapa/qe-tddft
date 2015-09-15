@@ -22,3 +22,9 @@ install/configure.msg
 install/make_lapack.inc
 install/make_wannier90.sys
 make.sys
+
+config.log
+config.status
+makedeps.sh
+ce-tddft/src/Makefile
+ce-tddft/src/Makefile-gpu
