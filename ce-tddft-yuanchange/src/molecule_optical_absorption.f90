@@ -108,6 +108,7 @@ subroutine molecule_optical_absorption
 
     ! loop over k-points     
     if (nks > 1) rewind (iunigk)
+
     do ik = 1, nks
       current_k = ik
       current_spin = isk(ik)
@@ -164,6 +165,11 @@ subroutine molecule_optical_absorption
       evc(:,1:nbnd_occ(ik)) = tddft_psi(:,1:nbnd_occ(ik),1)
 
       ! save wavefunctions to disk
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! for multiple k-points, sum_band will use the evc in file iunwfc to compute
+! charge
+      CALL save_buffer (evc, nwordwfc, iunwfc, ik)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       call save_buffer (evc, nwordwfc, iunevcn, ik)
       call save_buffer (tddft_psi, nwordtdwfc, iuntdwfc, ik)
         
@@ -263,7 +269,6 @@ CONTAINS
     deallocate (tddft_psi, tddft_hpsi, tddft_spsi, b)
     deallocate (charge, dipole, quadrupole, circular, circular_local)
     deallocate (r_pos, r_pos_s)
-
   END SUBROUTINE deallocate_optical
    
    

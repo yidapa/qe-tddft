@@ -14,12 +14,17 @@ SUBROUTINE tddft_setup
   !
   USE kinds,         ONLY : dp
   USE io_global,     ONLY : stdout, ionode
+  USE wvfct,         ONLY : nbnd, et, wg, npwx, &
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                npw, g2kin, igk, ecutwfc
+  USE io_files,      ONLY : iunigk
+  USE cell_base,     ONLY : tpiba2
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   USE ions_base,     ONLY : tau, nat, ntyp => nsp, atm
   USE atom,          ONLY : rgrid
-  USE wvfct,         ONLY : nbnd, et, wg, npwx
   USE lsda_mod,      ONLY : nspin, lsda
   USE scf,           ONLY : v, vrs, vltot, rho, rho_core, kedtau
-  USE gvect,         ONLY : ngm
+  USE gvect,         ONLY : ngm, g
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
   USE klist,         ONLY : xk, degauss, ngauss, nks, nelec, lgauss, wk, two_fermi_energies
@@ -139,6 +144,25 @@ SUBROUTINE tddft_setup
   ! avoid zero value for alpha_pv
   alpha_pv = max(alpha_pv, 1.0d-2)
   write(stdout,'(5X,''alpha_pv='',F12.4,'' eV'')') alpha_pv*rytoev
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  REWIND( iunigk )
+  !
+  ! ... The following loop must NOT be called more than once in a run
+  ! ... or else there will be problems with variable-cell calculations
+  !
+  DO ik = 1, nks
+     !
+     ! ... g2kin is used here as work space
+     !
+     CALL gk_sort( xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin )
+     !
+     ! ... if there is only one k-point npw and igk stay in memory
+     !
+     IF ( nks > 1 ) WRITE( iunigk ) igk
+     !
+  END DO
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call stop_clock('tddft_setup')
     

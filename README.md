@@ -10,13 +10,20 @@ Folders that have been added include the following:
 
 ```
 MCTG/
-    This is a directory containing all extra information provided by the Materials Computation and Theory Group (MCTG) at Stanford, e.g. installation instructions (see below)
+    This is a directory containing all extra information provided by the
+    Materials Computation and Theory Group (MCTG) at Stanford, e.g.
+    installation instructions (see below)
 ce-tddft/
-    This is the ce-tddft package originally written by the authors listed above. It is highly likely that this folder as is has been modified (by us) from the copy provided by the original authors on github.
+    This is the ce-tddft package originally written by the authors listed above.
+    It is possible that this folder has been modified (by us) from the copy
+    provided by the original authors on github, however we are trying to keep it
+    as similar as possible to the original version.
 reed-tddft/
-    This folder contains new work done by the MCTG in the investigation of integration schemes.
+    This folder contains new work done by the MCTG in the investigation of
+    integration schemes.
 TDDFPT/
-    This folder is provided by default in Quantum Espresso, but it is likely that certain files inside have been modified from their original form.
+    This folder is provided by default in Quantum Espresso, but it is likely
+    that certain files inside have been modified from their original form.
 ```
 
 #### 1. Installation
@@ -33,22 +40,16 @@ These examples use an E-field in the z-direction, include spin-degeneracy, and u
 Examples can be run in the same way as the graphene case
 
 ### Different time schemes in reed-tddft
-This code (for now) cannot be compiled on centurion because a higher version of autoconf
-(which I used on the sherlock cluster) is required and I don't have the time yet to translate it to
-fit the lower version on centurion.
+This code (for now) cannot be compiled on centurion because a higher version of autoconf (which I used on the sherlock cluster) is required and I don't have the time yet to translate it to fit the lower version on centurion.
 
 However, different time integration schemes can be found in the file
 molecule_optical_absorption.yuanchange starting from line 194 and the attached codes are
 in the folder src/attached.
 
-The default method in for molecule_optical_absorption.yuanchange is Crank-Nicolson +
-Iterative Method. It needs to be commented out when other schemes are chosen.
+The default method in for molecule_optical_absorption.yuanchange is Crank-Nicolson + Iterative Method. It needs to be commented out when other schemes are chosen.
 
 # README (copied from Quantum Espresso)
-This is the distribution of the Quantum ESPRESSO suite of codes (ESPRESSO:
-opEn-Source Package for Research in Electronic Structure, Simulation,
-and Optimization), promoted by the IOM-DEMOCRITOS National Simulation Center
-of the Italian CNR (http://www.democritos.it).
+This is the distribution of the Quantum ESPRESSO suite of codes (ESPRESSO: opEn-Source Package for Research in Electronic Structure, Simulation, and Optimization), promoted by the IOM-DEMOCRITOS National Simulation Center of the Italian CNR (http://www.democritos.it).
 
 Quick installation instructions for the impatient:
 

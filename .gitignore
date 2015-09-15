@@ -1,10 +1,20 @@
-PW/src/*.a
-PW/src/*.o
-PW/src/*.mod
-PW/src/*.x
-PW/tools/*.o
-PW/tools/*.mod
-PW/tools/*.x
+*~
+.*~
+*.x
+*.a
+*.o
+*.mod
+
+archive/atomic-5.2.0.tar.gz
+atomic/
+install/make-ld1
+install/uncompress-ld1
+
+Modules/version.f90
+bin/iotk
+include/c_defs.h
+install/make_blas.inc
+iotk
 
 install/config.log
 install/config.status
@@ -12,3 +22,9 @@ install/configure.msg
 install/make_lapack.inc
 install/make_wannier90.sys
 make.sys
+
+config.log
+config.status
+makedeps.sh
+ce-tddft/src/Makefile
+ce-tddft/src/Makefile-gpu

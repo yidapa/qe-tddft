@@ -5,11 +5,7 @@ This file explains how to install Quantum Espresso, ce-tddft, and reed-tddft on 
 ```
 $ git clone https://github.com/rehnd/qe-tddft.git
 ```
-*Note*: this will likely fail due to firewall settings on centurion. In this case, use
-
-```
-$ git clone git://github.com/rehnd/qe-tddft.git
-```
+*Note*: this will likely fail due to outdated SSL certificates on centurion. We are currently working on fixing this issue. For options for getting around this, talk to Danny.
 
 #### 2 Edit your .bashrc file to use the intel compiler and Open MPI
 Add the following lines to ~/.bashrc
@@ -54,14 +50,17 @@ which will build all of the original Quantum Espresso packages in qe-tddft (not 
 
 
 #### 7 Install ce-tddft (the original one with no modifications)
+The ce-tddft folder should be kept as the original ce-tddft code found at [https://github.com/dceresoli/ce-tddft], with as few modifications as possible. The only modifications that we have made are in configure.ac, which allows this version of ce-tddft to compile with version 5.2.* of Quantum Espresso.
 
 ```
 $ cd ce-tddft
 $ autoconf
 $ ./configure --with-qe-source=..
+$ mkdir bin
+$ make all
 ```
 
-The executable tddft.x is in the folder ce-tddft/bin
+The executable tddft.x is in the folder ```qe-tddft/ce-tddft/bin```.
 
 #### 8 Configure the runscript on the PBS on centurion
 Change to the bin directory in the top-level espresso directory

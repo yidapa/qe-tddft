@@ -182,7 +182,10 @@ SUBROUTINE tddft_openfil
   USE ldaU,             ONLY : lda_plus_U, nwfcU
   USE klist,            ONLY : nks
   USE io_files,         ONLY : prefix, iunhub, iunwfc, &
-                               nwordwfcU, nwordwfc, nwordatwfc, seqopn
+                               nwordwfcU, nwordwfc, nwordatwfc, seqopn, &
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                iunigk
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   USE noncollin_module, ONLY : npol
   USE mp_global,        ONLY : kunit
   USE buffers,          ONLY : open_buffer
@@ -212,6 +215,12 @@ SUBROUTINE tddft_openfil
   nwordwfcU = npwx*nwfcU*npol
   IF ( lda_plus_u ) &
      CALL open_buffer( iunhub, 'hub', nwordwfcU, io_level, exst )
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! ... iunigk contains the number of PW and the indices igk
+  !
+  CALL seqopn( iunigk, 'igk', 'UNFORMATTED', exst )
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 END SUBROUTINE tddft_openfil
 
