@@ -15,8 +15,9 @@ MCTG/
     installation instructions (see below)
 ce-tddft/
     This is the ce-tddft package originally written by the authors listed above.
-    It is highly likely that this folder as is has been modified (by us) from
-    the copy provided by the original authors on github.
+    It is possible that this folder has been modified (by us) from the copy
+    provided by the original authors on github, however we are trying to keep it
+    as similar as possible to the original version.
 reed-tddft/
     This folder contains new work done by the MCTG in the investigation of
     integration schemes.
