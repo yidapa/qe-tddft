@@ -1,0 +1,41 @@
+&control
+    calculation = 'scf'
+    title = 'TDDFT Example 2H-MoS2'
+    restart_mode='from_scratch',
+    pseudo_dir = '../../../pseudo',
+    outdir='./out',
+    prefix='2H-MoS2'
+ /
+ &system
+    ibrav = 8,
+    celldm(1) = 6.016890,
+    celldm(2) = 1.731470,
+    celldm(3) = 11.30653,
+    nat = 6,
+    ntyp = 2,
+    ecutwfc = 26,
+    nosym=.true,
+/
+ &electrons
+    electron_maxstep = 1000
+	diagonalization = 'david',
+    conv_thr = 1.0d-8,
+ /
+&ions
+/
+
+ATOMIC_SPECIES
+Mo	95.95	Mo.pbe-mt_fhi.UPF
+S	32.065	S.pbe-mt_fhi.UPF
+
+ATOMIC_POSITIONS {Angstrom}
+Mo	0.00000  0.00008  0.00000
+Mo	1.59200  2.75658  0.00000
+S	0.00000  3.67528  1.56350
+S	0.00000  3.67528 -1.56350
+S	1.59200  0.91879  1.56350
+S	1.59200  0.91879 -1.56350
+
+K_POINTS automatic
+16 16 1    0 0 0
+
