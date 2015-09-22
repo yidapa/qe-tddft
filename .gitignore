@@ -5,6 +5,23 @@
 *.o
 *.mod
 
+NEB/
+PWCOND/
+XSpectra/
+archive/neb-5.2.0.tar.gz
+archive/pwcond-5.2.0.tar.gz
+archive/xspectra-5.2.0.tar.gz
+install/make-neb
+install/make-phonon
+install/make-pwcond
+install/make-tddfpt
+install/make-xspectra
+install/uncompress-neb
+install/uncompress-phonon
+install/uncompress-pwcond
+install/uncompress-tddfpt
+install/uncompress-xspectra
+
 archive/atomic-5.2.0.tar.gz
 atomic/
 install/make-ld1
