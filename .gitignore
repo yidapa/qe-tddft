@@ -28,3 +28,11 @@ config.status
 makedeps.sh
 ce-tddft/src/Makefile
 ce-tddft/src/Makefile-gpu
+
+ce-tddft-yuanchange/src/Makefile-gpu
+ce-tddft-yuanchange/src/Makefile
+ce-tddft-yuanchange/src/make.depend
+
+rehnd-tddft/src/Makefile-gpu
+rehnd-tddft/src/Makefile
+rehnd-tddft/src/make.depend
