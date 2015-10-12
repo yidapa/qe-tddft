@@ -38,11 +38,9 @@ include/c_defs.h
 install/make_blas.inc
 iotk
 
-install/config.log
-install/config.status
-install/configure.msg
-install/make_lapack.inc
-install/make_wannier90.sys
+configure.msg
+make_lapack.inc
+make_wannier90.sys
 make.sys
 
 config.log
@@ -51,13 +49,12 @@ makedeps.sh
 ce-tddft/src/Makefile
 ce-tddft/src/Makefile-gpu
 
-ce-tddft-yuanchange/src/Makefile-gpu
+Makefile-gpu
 ce-tddft-yuanchange/src/Makefile
 ce-tddft-yuanchange/src/make.depend
 
 rehnd-tddft/src/Makefile-gpu
 rehnd-tddft/src/Makefile
-rehnd-tddft/src/make.depend
 
 out
 *.pw-out
