@@ -4,6 +4,9 @@
 *.a
 *.o
 *.mod
+make.depend
+data
+dip?.out
 
 NEB/
 PWCOND/
