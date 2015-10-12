@@ -1,0 +1,213 @@
+
+     Program QE v.5.2.0 starts on  2Sep2015 at 19:16:33 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on    16 processors
+     R & G space division:  proc/nbgrp/npool/nimage =      16
+ 
+     ***** This is TDDFT svn revision unknown      *****
+ 
+
+     Reading data from directory:
+     ./out/2H-MoS2.save
+
+   Info: using nr1, nr2, nr3 values from input
+
+   Info: using nr1, nr2, nr3 values from input
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation      = PBE ( 1  4  3  4 0 0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+               file Mo.pbe-mt_fhi.UPF: wavefunction(s)  4f renormalized
+               file S.pbe-mt_fhi.UPF: wavefunction(s)  4f renormalized
+ 
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min          32      32     10                 4764     4764     832
+     Max          33      33     11                 4787     4787     861
+     Sum         515     515    161                76355    76355   13387
+ 
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     scalapack distributed-memory algorithm (size of sub-group:  2*  2 procs)
+
+     alpha_pv=     28.1966 eV
+ 
+     Calculation type      : optical     
+     Systme is             : molecule
+     Number or steps       :           50
+     Time step             :       0.0413 rydberg_atomic_time
+     Electric field dir.   :            3 (1=x,2=y,3=z)
+     Electric field impulse:       0.0053 bohrradius^-1
+ 
+     Done with tddft_cgsolver_initialize
+     Output quantities:
+       CHARGE spin  istep  charge
+       DIP    spin  istep  dipole(1:3)
+       QUAD   spin  istep  quadrupole(1:3,1:3)
+       ANG    spin  istep  Re[L(1:3)]  Im[L(1:3)]
+ 
+     Done with restart
+CHARGE 1      1    0.360000E+02
+DIP    1      1   -0.505535E+01    0.156873E+01    0.517254E-04
+CHARGE 1      2    0.360000E+02
+DIP    1      2   -0.505535E+01    0.156873E+01    0.190942E-01
+CHARGE 1      3    0.360000E+02
+DIP    1      3   -0.505535E+01    0.156873E+01    0.373276E-01
+CHARGE 1      4    0.360000E+02
+DIP    1      4   -0.505535E+01    0.156873E+01    0.543264E-01
+CHARGE 1      5    0.360000E+02
+DIP    1      5   -0.505535E+01    0.156873E+01    0.702093E-01
+CHARGE 1      6    0.360000E+02
+DIP    1      6   -0.505535E+01    0.156872E+01    0.853306E-01
+CHARGE 1      7    0.360000E+02
+DIP    1      7   -0.505535E+01    0.156872E+01    0.998474E-01
+CHARGE 1      8    0.360000E+02
+DIP    1      8   -0.505535E+01    0.156872E+01    0.113532E+00
+CHARGE 1      9    0.360000E+02
+DIP    1      9   -0.505536E+01    0.156872E+01    0.125963E+00
+CHARGE 1     10    0.360000E+02
+DIP    1     10   -0.505536E+01    0.156872E+01    0.136899E+00
+CHARGE 1     11    0.360000E+02
+DIP    1     11   -0.505536E+01    0.156871E+01    0.146482E+00
+CHARGE 1     12    0.360000E+02
+DIP    1     12   -0.505536E+01    0.156871E+01    0.155096E+00
+CHARGE 1     13    0.360000E+02
+DIP    1     13   -0.505536E+01    0.156871E+01    0.163023E+00
+CHARGE 1     14    0.360000E+02
+DIP    1     14   -0.505536E+01    0.156871E+01    0.170207E+00
+CHARGE 1     15    0.360000E+02
+DIP    1     15   -0.505537E+01    0.156871E+01    0.176344E+00
+CHARGE 1     16    0.360000E+02
+DIP    1     16   -0.505537E+01    0.156871E+01    0.181198E+00
+CHARGE 1     17    0.360000E+02
+DIP    1     17   -0.505537E+01    0.156871E+01    0.184849E+00
+CHARGE 1     18    0.360000E+02
+DIP    1     18   -0.505537E+01    0.156871E+01    0.187646E+00
+CHARGE 1     19    0.360000E+02
+DIP    1     19   -0.505537E+01    0.156870E+01    0.189915E+00
+CHARGE 1     20    0.360000E+02
+DIP    1     20   -0.505538E+01    0.156870E+01    0.191684E+00
+CHARGE 1     21    0.360000E+02
+DIP    1     21   -0.505538E+01    0.156869E+01    0.192687E+00
+CHARGE 1     22    0.360000E+02
+DIP    1     22   -0.505539E+01    0.156868E+01    0.192634E+00
+CHARGE 1     23    0.360000E+02
+DIP    1     23   -0.505539E+01    0.156867E+01    0.191497E+00
+CHARGE 1     24    0.360000E+02
+DIP    1     24   -0.505539E+01    0.156866E+01    0.189551E+00
+CHARGE 1     25    0.360000E+02
+DIP    1     25   -0.505540E+01    0.156865E+01    0.187145E+00
+CHARGE 1     26    0.360000E+02
+DIP    1     26   -0.505540E+01    0.156863E+01    0.184395E+00
+CHARGE 1     27    0.360000E+02
+DIP    1     27   -0.505540E+01    0.156862E+01    0.181104E+00
+CHARGE 1     28    0.360000E+02
+DIP    1     28   -0.505541E+01    0.156860E+01    0.176958E+00
+CHARGE 1     29    0.360000E+02
+DIP    1     29   -0.505541E+01    0.156859E+01    0.171832E+00
+CHARGE 1     30    0.360000E+02
+DIP    1     30   -0.505541E+01    0.156857E+01    0.165915E+00
+CHARGE 1     31    0.360000E+02
+DIP    1     31   -0.505541E+01    0.156856E+01    0.159554E+00
+CHARGE 1     32    0.360000E+02
+DIP    1     32   -0.505541E+01    0.156854E+01    0.152957E+00
+CHARGE 1     33    0.360000E+02
+DIP    1     33   -0.505542E+01    0.156853E+01    0.146028E+00
+CHARGE 1     34    0.360000E+02
+DIP    1     34   -0.505542E+01    0.156852E+01    0.138489E+00
+CHARGE 1     35    0.360000E+02
+DIP    1     35   -0.505542E+01    0.156851E+01    0.130169E+00
+CHARGE 1     36    0.360000E+02
+DIP    1     36   -0.505542E+01    0.156850E+01    0.121188E+00
+CHARGE 1     37    0.360000E+02
+DIP    1     37   -0.505542E+01    0.156849E+01    0.111888E+00
+CHARGE 1     38    0.360000E+02
+DIP    1     38   -0.505542E+01    0.156848E+01    0.102556E+00
+CHARGE 1     39    0.360000E+02
+DIP    1     39   -0.505542E+01    0.156847E+01    0.932052E-01
+CHARGE 1     40    0.360000E+02
+DIP    1     40   -0.505542E+01    0.156847E+01    0.836106E-01
+CHARGE 1     41    0.360000E+02
+DIP    1     41   -0.505542E+01    0.156846E+01    0.735600E-01
+CHARGE 1     42    0.360000E+02
+DIP    1     42   -0.505542E+01    0.156846E+01    0.630900E-01
+CHARGE 1     43    0.360000E+02
+DIP    1     43   -0.505542E+01    0.156846E+01    0.524930E-01
+CHARGE 1     44    0.360000E+02
+DIP    1     44   -0.505542E+01    0.156845E+01    0.420901E-01
+CHARGE 1     45    0.360000E+02
+DIP    1     45   -0.505541E+01    0.156845E+01    0.319813E-01
+CHARGE 1     46    0.360000E+02
+DIP    1     46   -0.505541E+01    0.156845E+01    0.219994E-01
+CHARGE 1     47    0.360000E+02
+DIP    1     47   -0.505541E+01    0.156845E+01    0.119069E-01
+CHARGE 1     48    0.360000E+02
+DIP    1     48   -0.505541E+01    0.156845E+01    0.165352E-02
+CHARGE 1     49    0.360000E+02
+DIP    1     49   -0.505540E+01    0.156845E+01   -0.854252E-02
+CHARGE 1     50    0.360000E+02
+DIP    1     50   -0.505540E+01    0.156845E+01   -0.183597E-01
+     Initialization:
+     tddft_setup  :      0.06s CPU      0.10s WALL (       1 calls)
+ 
+     Linear response
+     ch_psi       :   2953.18s CPU   3005.76s WALL ( 1403946 calls)
+     h_psi        :   3262.09s CPU   3313.64s WALL ( 1410446 calls)
+     Real time evolution
+     updateH      :     89.65s CPU     96.46s WALL (      50 calls)
+     dipole       :      0.02s CPU      0.02s WALL (      50 calls)
+ 
+     General routines
+     calbec       :    475.68s CPU    486.33s WALL ( 1410446 calls)
+     fft          :      0.48s CPU      0.50s WALL (     511 calls)
+     fftw         :   2344.19s CPU   2373.66s WALL ( 3163572 calls)
+     davcio       :      0.81s CPU    385.76s WALL (   39000 calls)
+ 
+     Parallel routines
+     fft_scatter  :   1010.92s CPU   1033.94s WALL ( 3164083 calls)
+ 
+ 
+
+     Called by init_run:
+
+     Called by electrons:
+     sum_band     :     88.75s CPU     95.57s WALL (      50 calls)
+     v_of_rho     :      0.90s CPU      0.90s WALL (      51 calls)
+
+     Called by c_bands:
+     init_us_2    :     11.33s CPU     11.68s WALL (   13000 calls)
+
+     Called by sum_band:
+
+     Called by *egterg:
+     h_psi        :   3262.09s CPU   3313.64s WALL ( 1410446 calls)
+
+     Called by h_psi:
+     add_vuspsi   :    366.88s CPU    373.11s WALL ( 1410446 calls)
+
+     General routines
+     calbec       :    475.68s CPU    486.33s WALL ( 1410446 calls)
+     fft          :      0.48s CPU      0.50s WALL (     511 calls)
+     fftw         :   2344.19s CPU   2373.66s WALL ( 3163572 calls)
+     davcio       :      0.81s CPU    385.76s WALL (   39000 calls)
+ 
+     Parallel routines
+     fft_scatter  :   1010.92s CPU   1033.94s WALL ( 3164083 calls)
+ 
+     PWSCF        :   3625.21s CPU   4083.15s WALL (       1 calls)
+ 
+   This run was terminated on:  20:24:36   2Sep2015            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=
